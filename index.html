@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Message for You</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        #memory-text {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 to-rose-100 min-h-screen flex items-center justify-center p-6 font-sans">
+
+    <div id="app" class="max-w-lg w-full text-center">
+        
+        <div id="envelope" class="glass-morphism rounded-3xl p-10 shadow-2xl cursor-pointer hover:scale-105 transition-transform duration-300" onclick="revealMessage()">
+            <div class="mb-6 flex justify-center">
+                <i data-lucide="mail-open" class="w-16 h-16 text-rose-400"></i>
+            </div>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-2">I have something to say...</h1>
+            <p class="text-gray-500 italic">Click to open</p>
+        </div>
+
+        <div id="message" class="hidden glass-morphism rounded-3xl p-8 shadow-2xl">
+            
+            <div class="mb-8">
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-500 mb-4 text-left">A quick reminder...</p>
+                <div id="carousel" class="relative bg-white/50 rounded-2xl p-6 min-h-[100px] flex items-center justify-center text-gray-700 italic shadow-inner border border-rose-100">
+                    <p id="memory-text">Remember that time we went out to Uttan Beach?</p>
+                    <button onclick="nextMemory()" class="absolute right-2 p-1 rounded-full hover:bg-rose-100 text-rose-400">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-left mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Hey,</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    I know things have been a bit quiet (and awkward) lately, so I built this to break the silence. I clearly lack the social skills to do this in person right now, but I wanted to say I miss our usual back-and-forth. I'm sorry for the friction. If you're ready to move past it, the coffee is on me. If not, I'll keep practicing my coding until you are. 
+                    <br><br>
+                    Whenever you're ready, I'm here. No rush, no pressure.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <textarea id="reply-box" rows="3" placeholder="Type a message back if you want..." 
+                    class="w-full p-4 rounded-xl border border-rose-200 focus:ring-2 focus:ring-rose-300 focus:outline-none bg-white/80 text-sm shadow-sm transition-all"></textarea>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="respond('sent')" class="bg-rose-400 hover:bg-rose-500 text-white py-3 rounded-xl transition-all font-medium shadow-md">
+                        Send Message
+                    </button>
+                    <button onclick="respond('space')" class="bg-white/50 hover:bg-white text-gray-500 py-3 rounded-xl transition-all font-medium border border-gray-200">
+                        Need space
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="final" class="hidden glass-morphism rounded-3xl p-10 shadow-xl">
+            <p id="final-text" class="text-gray-700 font-medium"></p>
+        </div>
+    </div>
+
+    <script>
+    // FIX 1: Ensure icons load after the DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+    });
+
+    const memories = [
+        "Remember that time we went out to Uttan Beach?",
+        "I still laugh thinking about that inside joke we use to have.",
+        "That night when we sang songs on our office trip together.",
+        "Just missing our usual chit-chats."
+    ];
+
+    let currentMemory = 0;
+
+    function revealMessage() {
+        // FIX 2: Use display 'none' for a cleaner transition
+        document.getElementById('envelope').style.display = 'none';
+        document.getElementById('message').classList.remove('hidden');
+    }
+
+    function nextMemory() {
+        const memoryElement = document.getElementById('memory-text');
+        memoryElement.style.opacity = 0;
+        
+        setTimeout(() => {
+            currentMemory = (currentMemory + 1) % memories.length;
+            memoryElement.innerText = memories[currentMemory];
+            memoryElement.style.opacity = 1;
+        }, 300);
+    }
+
+    function respond(type) {
+        const replyValue = document.getElementById('reply-box').value;
+        const finalDiv = document.getElementById('final');
+        const finalText = document.getElementById('final-text');
+        const myNumber = "918655841020"; // Mumbai number confirmed
+
+        if (type === 'sent') {
+            const messageBody = replyValue.trim() !== "" ? replyValue : "Hey, I saw the website you made.";
+            const encodedMessage = encodeURIComponent(messageBody);
+            const whatsappUrl = `https://wa.me/${myNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+            finalText.innerText = "Opening WhatsApp... Thanks for reaching out.";
+        } else {
+            finalText.innerText = "I completely understand. I'll be here whenever you're ready to talk.";
+        }
+
+        document.getElementById('message').style.display = 'none';
+        finalDiv.classList.remove('hidden');
+    }
+    </script>
+</body>
+</html>
